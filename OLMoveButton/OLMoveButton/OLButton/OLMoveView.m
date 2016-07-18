@@ -1,15 +1,19 @@
 //
-//  OLMoveMenu.m
-//  OLMoveMenu
+//  OLMoveView.m
+//  OLMoveView
 //
-//  Created by olive on 16/7/13.
+//  Created by olive on 16/2/29.
 //  Copyright © 2016年 olive. All rights reserved.
 //
 
-#import "OLMoveMenu.h"
+#import "OLMoveView.h"
 
-@interface OLMoveMenu()
+@interface OLMoveView ()
+@property (nonatomic, strong) UIView *bannerImgV;
 
+@property (nonatomic, assign) CGFloat supWidth;
+@property (nonatomic, assign) CGFloat supHeihgt;
+@property (nonatomic, assign) BOOL    isMove;
 /**
  *  按钮距离中心点x的距离
  */
@@ -18,34 +22,29 @@
  *  按钮距离中心点y的距离
  */
 @property (nonatomic, assign, readwrite) CGFloat pointToCenterY;
-/**
- *  是否是移动
- */
-@property (nonatomic, assign, readwrite) BOOL    isMove;
-/**
- *  移动图
- */
-@property (nonatomic, strong, readwrite) UIView  *bannerImgV;
-
 @end
 
-@implementation OLMoveMenu
+@implementation OLMoveView
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
     if (self) {
-        self.isAutoBack = NO;
         self.isMove = NO;
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame
+{
     self = [super initWithFrame:frame];
     if (self) {
-        UIImageView *bannerImgV = [[UIImageView alloc] initWithFrame:frame];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+        
+        UIImageView *bannerImgV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         bannerImgV.userInteractionEnabled = YES;
         bannerImgV.backgroundColor = [UIColor greenColor];
+        bannerImgV.image = [UIImage imageNamed:@"icon_banner_normal"];
         [self addSubview:bannerImgV];
         self.bannerImgV = bannerImgV;
     }
@@ -67,7 +66,8 @@
     }
 }
 
-- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
     if (self.isAutoBack) {
         UITouch *touch = [touches anyObject];
         CGPoint movedPoint = [touch locationInView:[self superview]];
@@ -102,11 +102,10 @@
             newCenter.y = selfHeight;
         }
         
-//        NSLog(@"newCenter x = %f , newCenter y = %f",newCenter.x,newCenter.y);
+        //        NSLog(@"newCenter x = %f , newCenter y = %f",newCenter.x,newCenter.y);
         self.center = newCenter;
     }
-    self.isMove = YES;
-}
+    self.isMove = YES;}
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     if (self.isAutoBack) {
@@ -138,11 +137,17 @@
     }
     if (!self.isMove) {
         // 被点击了
-        if (self.delegate && [self.delegate respondsToSelector:@selector(moveMenuClicked)]) {
-            [self.delegate moveMenuClicked];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(moveViewClicked)]) {
+            [self.delegate moveViewClicked];
         }
     }
-    self.isMove = NO;
+    self.isMove = NO;}
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification
+{
+    self.supWidth = [self superview].frame.size.width;
+    self.supHeihgt = [self superview].frame.size.height;
 }
+
 
 @end
