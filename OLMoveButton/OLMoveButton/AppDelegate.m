@@ -7,9 +7,10 @@
 //
 
 #import "AppDelegate.h"
-#import "OLMoveButton.h"
+#import "OLMoveMenu.h"
+#import "YsBannerView.h"
 
-@interface AppDelegate ()
+@interface AppDelegate ()<OLMoveMenuDelegate, BannerMenuDelegate>
 
 @end
 
@@ -18,12 +19,21 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window.backgroundColor = [UIColor whiteColor];
-    OLMoveButton *moveButton = [[OLMoveButton alloc] initWithFrame:CGRectMake(0, 30, 30, 30)];
-    moveButton.backgroundColor = [UIColor greenColor];
-//    moveButton.isAutoBack = YES;
-    [self.window.rootViewController.view addSubview:moveButton];
+    YsBannerView *moveMenu = [[YsBannerView alloc] initWithFrame:CGRectMake(10, 60, 40, 40)];
+    moveMenu.backgroundColor = [UIColor redColor];
+    moveMenu.delegate = self;
+    [self.window.rootViewController.view addSubview:moveMenu];
+    [self.window.rootViewController.view bringSubviewToFront:moveMenu];
     
     return YES;
+}
+
+- (void)moveMenuClicked {
+    NSLog(@".......................");
+}
+
+- (void)barnerMenuClicked {
+    NSLog(@"aaaaaaaaaaaa");
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

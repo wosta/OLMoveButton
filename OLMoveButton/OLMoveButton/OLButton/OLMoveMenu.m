@@ -1,14 +1,14 @@
 //
-//  OLMoveButton.m
-//  OLMoveButton
+//  OLMoveMenu.m
+//  OLMoveMenu
 //
 //  Created by olive on 16/7/13.
 //  Copyright © 2016年 olive. All rights reserved.
 //
 
-#import "OLMoveButton.h"
+#import "OLMoveMenu.h"
 
-@interface OLMoveButton()
+@interface OLMoveMenu()
 
 /**
  *  按钮距离中心点x的距离
@@ -18,15 +18,36 @@
  *  按钮距离中心点y的距离
  */
 @property (nonatomic, assign, readwrite) CGFloat pointToCenterY;
+/**
+ *  是否是移动
+ */
+@property (nonatomic, assign, readwrite) BOOL    isMove;
+/**
+ *  移动图
+ */
+@property (nonatomic, strong, readwrite) UIView  *bannerImgV;
 
 @end
 
-@implementation OLMoveButton
+@implementation OLMoveMenu
 
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.isAutoBack = NO;
+        self.isMove = NO;
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        UIImageView *bannerImgV = [[UIImageView alloc] initWithFrame:frame];
+        bannerImgV.userInteractionEnabled = YES;
+        bannerImgV.backgroundColor = [UIColor greenColor];
+        [self addSubview:bannerImgV];
+        self.bannerImgV = bannerImgV;
     }
     return self;
 }
@@ -84,6 +105,7 @@
 //        NSLog(@"newCenter x = %f , newCenter y = %f",newCenter.x,newCenter.y);
         self.center = newCenter;
     }
+    self.isMove = YES;
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -114,6 +136,13 @@
             [self setCenter:newPoint];
         }];
     }
+    if (!self.isMove) {
+        // 被点击了
+        if (self.delegate && [self.delegate respondsToSelector:@selector(moveMenuClicked)]) {
+            [self.delegate moveMenuClicked];
+        }
+    }
+    self.isMove = NO;
 }
 
 @end
